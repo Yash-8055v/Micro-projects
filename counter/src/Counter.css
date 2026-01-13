@@ -1,0 +1,15 @@
+.Counter button{
+  margin: 5px 15px;
+  padding: 20px 30px;
+  font-size: 50px;
+  font-weight: 700;
+  border-radius: 10px;
+}
+
+
+p{
+  margin: 5px 15px;
+  padding: 20px 30px;
+  font-size: 50px;
+  font-weight: 700;
+}
