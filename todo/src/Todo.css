@@ -1,0 +1,13 @@
+.todos{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+}
+input,button{
+  font-size: large;
+  margin-left: 10px;
+}
+ul {
+  list-style: none;
+}
