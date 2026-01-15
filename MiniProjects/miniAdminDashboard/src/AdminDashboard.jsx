@@ -8,11 +8,12 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     setLoading(true);
     setError("")
-    fetch(`https://jsonplaceholder.typicode.com/users?_page=${currentPage}&_limit=3&name_like=${searchText}`)
+    fetch(`https://jsonplaceholder.typicode.com/users?_page=${currentPage}&_limit=3&name_like=${searchText}&_sort=name&_order=${sortOrder}`)
     .then(res => res.json())
     .then((data) => {
       setUsers(data);
@@ -23,9 +24,9 @@ export default function AdminDashboard() {
       setLoading(false);
       setError("failed to fetch users");
     })
-  }, [currentPage, searchText])
+  }, [currentPage, searchText, sortOrder])
 
-  const handelSearch =  (e) => {
+  const handleSearch =  (e) => {
 
     const text = e.target.value;
      setSearchText(text);
@@ -49,6 +50,21 @@ export default function AdminDashboard() {
       <h1 className="text-2xl font-bold mb-6 text-center">
         Admin Dashboard
       </h1>
+      <div className="flex justify-center gap-4 mb-6">
+  <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" onClick={(e) => {
+  setCurrentPage(1);
+  setSortOrder("asc");
+}} >
+    Name ↑
+  </button>
+
+  <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" onClick={(e) => {
+  setCurrentPage(1);
+  setSortOrder("asc");
+}} >
+    Name ↓
+  </button>
+</div>
 
       {/* Search */}
       <div className="max-w-xl mx-auto mb-6">
@@ -57,7 +73,7 @@ export default function AdminDashboard() {
           placeholder="Search users..."
           className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={searchText}
-          onChange={handelSearch}
+          onChange={handleSearch}
         />
       </div>
 
