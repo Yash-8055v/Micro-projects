@@ -16,7 +16,7 @@ export default function AdminDashboard() {
     .then(res => res.json())
     .then((data) => {
       setUsers(data);
-      setFilteredUsers(data);
+      // setFilteredUsers(data);
       setLoading(false);
     })
     .catch(() => {
@@ -25,10 +25,10 @@ export default function AdminDashboard() {
     })
   }, [currentPage, searchText])
 
-  const handelSearch = async (e) => {
+  const handelSearch =  (e) => {
 
     const text = e.target.value;
-    await setSearchText(text);
+     setSearchText(text);
     // console.log(text)
     // const selectedUsers = users.filter((user) => (
     //   user.name.toLowerCase().includes(text.toLowerCase())
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
           <tbody>
             {
-                filteredUsers.map((user) => (
+                users.map((user) => (
                   <tr className="border-t" key={user.id}>
                     <td className="p-3">{user.name}</td>
                     <td className="p-3">{user.email}</td>
