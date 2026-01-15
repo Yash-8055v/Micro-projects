@@ -24,7 +24,7 @@ export default function Paginated() {
 
   const changeCurrentPage = (e) => {
     const currentPage = e.target.value;
-    setCurrentPage(currentPage);
+    setCurrentPage(Number(currentPage)); //! value from html element is always String so here convert it to number
   }
 
 
