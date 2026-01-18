@@ -5,12 +5,43 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const {login} = useAuth();
   const navigate = useNavigate();
+  
+  const handleSubmit = async () => {
+    
+    try {
+      setError("");
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"   // tells Express to parse JSON
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
 
-  const handleSubmit = () => {
-  login({ email, password }, "fake-token");
-  navigate("/dashboard");
+      if (!res.ok) {
+         setError("Invalid credentials");
+        return;
+      }
+
+      const {user: userData, token} = await res.json();
+
+      
+      
+      login(userData, token);
+      
+      navigate("/dashboard");
+
+    }catch {
+      setError("Server is not reachable");
+    }
+
+
 };
 
 
@@ -43,9 +74,10 @@ export default function Login() {
           Login
         </button>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
-          Not logged in
-        </p>
+        {error && <p className="text-center text-sm text-red-600 mt-4">
+                  {error}
+                  </p>
+        }
 
       </div>
     </div>

@@ -15,7 +15,12 @@ export default function Dashboard() {
           Welcome, {user.email}
         </p>
 
-        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => logout()}>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => 
+        {
+          
+          logout()
+
+        }}>
           Logout
         </button>
 
