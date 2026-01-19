@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/User.model.js";
 import jwt from "jsonwebtoken";
+import { cookieOptions } from "../config/cookies.js";
 
 export const signup = async (req, res) => {
   try {
@@ -63,12 +64,23 @@ export const login = async (req, res) => {
       
     }
     
-    const token = await jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
+    const accessToken = await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_TOKEN_EXPIRY});
+
+    const refreshToken = await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {expiresIn: process.env.REFRESH_TOKEN_EXPIRY});
+
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
 
     res.status(200).json({
       status: "success",
       message: "login successful",
-      token
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      },
+      
     })
 
   } catch (error) {
