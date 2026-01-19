@@ -30,7 +30,10 @@ export default function Signup() {
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-4">
-          Signup only — login comes next
+           Already have an account?{" "}
+          <span className="text-blue-600 cursor-pointer hover:underline">
+            Login
+          </span>
         </p>
 
       </div>
