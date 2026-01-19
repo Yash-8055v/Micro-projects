@@ -1,49 +1,50 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "../api/api.js"
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-  const savedAuth = localStorage.getItem("auth");
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/auth/me");
+        setUser(res.data.user);
 
-  if (savedAuth) {
-    const parsed = JSON.parse(savedAuth);
-    setUser(parsed.user);
-    setToken(parsed.token);
-  }
-
-  setLoading(false);
+      } catch (error) {
+        setUser(null);
+      }finally{
+        setLoading(false);
+      }
+    }
+    checkAuth();
+  
 }, []);
 
 
-  const login = (userData, jwtToken) => {
-    setUser(userData);
-    setToken(jwtToken);
-
-    localStorage.setItem(
-    "auth",
-    JSON.stringify({
-      user: userData,
-      token: jwtToken,
-    })
-
+  const login = (userData) => {
+    setUser(userData)
     
-  );
+  };
 
   
-  };
 
-  const logout = () => {
+  const logout = async () => {
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    // even if backend fails, still clear UI state
+    console.error("Logout error:", error);
+  } finally {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem("auth")
-  };
+  }
+};
+
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user,  login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

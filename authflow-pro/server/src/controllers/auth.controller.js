@@ -91,3 +91,14 @@ export const login = async (req, res) => {
   }
 
 };
+
+export const logout = (req, res) => {
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+
+  res.status(200).json({status: "success", message: "logout successfully"});
+}
+
+export const getMe = (req, res) => {
+  res.status(200).json(req.user)
+}

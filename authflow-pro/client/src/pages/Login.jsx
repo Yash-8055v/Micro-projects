@@ -28,7 +28,7 @@ export default function Login() {
     
 
     // SUCCESS
-    login(data.user, data.token);
+    login(data.user);
 
     navigate("/dashboard", { replace: true });
 
