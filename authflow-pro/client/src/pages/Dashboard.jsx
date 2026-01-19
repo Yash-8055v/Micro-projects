@@ -1,4 +1,13 @@
+import { useNavigate } from "react-router-dom";
+import {useAuth} from "../context/AuthContext"
+
 export default function Dashboard() {
+  const {logout} = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/login", {replace: true})
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-lg w-96 text-center">
@@ -8,7 +17,9 @@ export default function Dashboard() {
           You are logged in (protected route)
         </p>
 
-        <button className="w-full bg-red-500 text-white p-3 rounded">
+        <button className="w-full bg-red-500 text-white p-3 rounded" 
+          onClick={handleLogout}
+        >
           Logout
         </button>
       </div>

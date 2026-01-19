@@ -25,6 +25,7 @@ export default function Login() {
 
     const data = response.data;
 
+    
 
     // SUCCESS
     login(data.user, data.token);
@@ -35,6 +36,8 @@ export default function Login() {
     setError(err.response?.data?.message || "Login failed");
   } finally {
     setLoading(false);
+    setEmail("");
+    setPassword("")
   }
 };
 
