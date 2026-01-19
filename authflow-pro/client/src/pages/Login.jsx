@@ -91,9 +91,14 @@ export default function Login() {
         </button>
 
         {/* Footer */}
+        
+
         <p className="text-center text-sm text-gray-600 mt-4">
           Don’t have an account?{" "}
-          <span className="text-blue-600 cursor-pointer hover:underline">
+          <span
+            className="text-blue-600 cursor-pointer hover:underline"
+            onClick={() => navigate("/signup")}
+          >
             Sign up
           </span>
         </p>
