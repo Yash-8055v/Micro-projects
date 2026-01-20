@@ -89,6 +89,22 @@ export default function Login() {
         >
            {loading ? "Logging in..." : "Login"}
         </button>
+          <p className="text-center mb-2 mt-2">OR</p>
+        <button
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 p-3 rounded hover:bg-gray-100 transition mb-4"
+          onClick={() => {
+            window.location.href = "http://localhost:3000/api/auth/google";
+          }}
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          <span className="text-sm font-medium">
+            Continue with Google
+          </span>
+        </button>
 
         {/* Footer */}
         
@@ -102,6 +118,8 @@ export default function Login() {
             Sign up
           </span>
         </p>
+
+        
 
         {error && (
           <p className="text-center text-sm text-red-600 mt-4">
