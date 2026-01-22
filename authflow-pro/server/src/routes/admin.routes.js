@@ -1,14 +1,20 @@
 import express from "express";
-
-import { getProfile } from "../controllers/user.controller.js";  
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { requireRole } from "../middlewares/requireRole.js";
 
-
 const router = express.Router();
 
-
-router.get("/profile", verifyToken, requireRole(["user", "admin"]),getProfile);
+// Admin-only route
+router.get(
+  "/stats",
+  verifyToken,
+  requireRole(["admin"]),
+  (req, res) => {
+    res.status(200).json({
+      status: "success",
+      message: "Admin stats data",
+    });
+  }
+);
 
 export default router;
-
