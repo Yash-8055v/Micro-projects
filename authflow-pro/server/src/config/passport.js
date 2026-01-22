@@ -1,28 +1,23 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
-
-
-passport.use(
-  
-  new GoogleStrategy(
-    {
-      
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      /*
-        This function runs AFTER Google successfully logs in the user.
-        For now, we are NOT saving anything in DB.
-        We are only learning the flow.
-      */
-
-      console.log("Google profile:", profile);
-
-      // Temporary: just pass Google profile forward
-      return done(null, profile);
-    }
-  )
-);
+if (
+  process.env.GOOGLE_CLIENT_ID &&
+  process.env.GOOGLE_CLIENT_SECRET &&
+  process.env.GOOGLE_CALLBACK_URL
+) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        return done(null, profile);
+      }
+    )
+  );
+} else {
+  console.warn("⚠️ Google OAuth not configured. Skipping GoogleStrategy.");
+}
