@@ -1,23 +1,40 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { User } from "../models/User.model.js";
 
-if (
-  process.env.GOOGLE_CLIENT_ID &&
-  process.env.GOOGLE_CLIENT_SECRET &&
-  process.env.GOOGLE_CALLBACK_URL
-) {
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        return done(null, profile);
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email = profile.emails[0].value;
+
+        let user = await User.findOne({ email });
+
+        if (user && user.authProvider === "local") {
+          return done(null, false, {
+            message: "Email already registered with password",
+          });
+        }
+
+        if (!user) {
+          user = await User.create({
+            email,
+            authProvider: "google",
+            role: "user",
+          });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
       }
-    )
-  );
-} else {
-  console.warn("⚠️ Google OAuth not configured. Skipping GoogleStrategy.");
-}
+    }
+  )
+);
+
+console.log("✅ Google strategy registered");

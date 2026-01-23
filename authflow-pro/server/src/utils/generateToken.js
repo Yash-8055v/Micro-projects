@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken"
+
 const generateToken = async (user) => {
 
   const payload = {

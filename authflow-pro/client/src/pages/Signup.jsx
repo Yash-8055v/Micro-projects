@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -12,12 +12,6 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    // client-side validation
-    if (!email || !password || !confirmPassword) {
-      setError("All fields are required");
-      return;
-    }
-
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -32,10 +26,13 @@ export default function Signup() {
         password,
       });
 
-      // signup success → go to login
+      // Signup success → redirect to login
       navigate("/login", { replace: true });
+
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed");
+      setError(
+        err.response?.data?.message || "Signup failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -77,15 +74,33 @@ export default function Signup() {
         />
 
         <button
-          className="w-full bg-green-600 text-white p-3 rounded disabled:bg-gray-400"
+          className="w-full bg-green-600 text-white p-3 rounded disabled:opacity-60"
           onClick={handleSignup}
           disabled={loading}
         >
           {loading ? "Creating account..." : "Sign Up"}
         </button>
 
+
+        <p className="text-center mb-2 mt-2">OR</p>
+        <button
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 p-3 rounded hover:bg-gray-100 transition mb-4"
+          onClick={() => {
+            window.location.href = "http://localhost:3000/api/auth/google";
+          }}
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          <span className="text-sm font-medium">
+            Continue with Google
+          </span>
+        </button>
+        
         {error && (
-          <p className="text-red-500 text-sm mt-4 text-center">
+          <p className="text-center text-sm text-red-600 mt-4">
             {error}
           </p>
         )}
