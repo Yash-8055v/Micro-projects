@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import { cookieOptions } from "../config/cookies.js";
+import generateToken from "../utils/generateToken.js";
 
 export const signup = async (req, res) => {
   try {
@@ -65,19 +66,13 @@ export const login = async (req, res) => {
     if(!isPasswordValid) return res.status(403).json({status: "failure", message: "invalid credential"});
     
     
-    const payload = {
-      userId: user._id,
-      email: user.email,
-      role: user.role
-      
-    }
-    
-    const accessToken = await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_TOKEN_EXPIRY});
+    const {newAccessToken, newRefreshToken} = generateToken(user);
 
-    const refreshToken = await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {expiresIn: process.env.REFRESH_TOKEN_EXPIRY});
+    user.refreshToken = newRefreshToken;
+      await user.save();
 
-    res.cookie("accessToken", accessToken, cookieOptions);
-    res.cookie("refreshToken", refreshToken, cookieOptions);
+    res.cookie("accessToken", newAccessToken, cookieOptions);
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
 
 
     res.status(200).json({
@@ -109,6 +104,47 @@ export const logout = (req, res) => {
 
 export const getMe = (req, res) => {
   res.status(200).json(req.user)
+}
+
+export const refresh = async (req, res) => {
+  try {
+    const {refreshToken} = req.cookies;
+    if (!refreshToken) {
+  return res.status(401).json({
+    status: "failure",
+    message: "Refresh token missing",
+  });
+}
+
+    const decoded = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user || user.refreshToken !== refreshToken) {
+      res.clearCookie("accessToken", cookieOptions);
+      res.clearCookie("refreshToken", cookieOptions);
+      return res.status(401).json({status: "failure", message: "reusing token"});
+    }
+
+    const {newAccessToken, newRefreshToken} = generateToken(user);
+
+    user.refreshToken = newRefreshToken;
+      await user.save();
+
+    res.cookie("accessToken", newAccessToken, cookieOptions);
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
+
+
+    res.status(200).json({
+      status: "success",
+      message: "new refresh token assign",
+      accessToken: newAccessToken,
+    })
+
+  } catch (error) {
+    return res.status(401).json({
+      status: "failure",
+      message: "Invalid or expired refresh token"
+    })
+  }
 }
 
 export const googleCallback = async (req, res) => {
