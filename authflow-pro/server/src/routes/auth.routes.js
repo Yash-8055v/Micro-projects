@@ -12,17 +12,27 @@ router.post("/logout", logout)
 router.get("/me", verifyToken, getMe)
 router.post("/refresh", refresh)
 
+
+/**
+ * STEP 1: Start Google OAuth
+ * This redirects user to Google login page
+ */
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile", "email"],
+    scope: ["profile", "email"], // what data we want from Google
   })
 );
 
+/**
+ * STEP 2: Google redirects back here after login
+ * Passport verifies Google user and attaches it to req.user
+ */
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    session: false,
+    session: false, // we use JWT, not sessions
+    failureRedirect: "http://localhost:5173/login",
   }),
   googleCallback
 );

@@ -24,11 +24,12 @@ export default function Login() {
     });
 
     const data = response.data;
+    console.log(data)
 
     
 
-    // SUCCESS
-    login(data.user);
+    // // SUCCESS
+    // login(data.user);
 
     navigate("/dashboard", { replace: true });
 

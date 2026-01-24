@@ -45,6 +45,7 @@ export const login = async (req, res) => {
   try {
     //* 1 Read email & password
     const {email, password} = req.body;
+    
   
     //* 2 Validate email and password
     if(!email|| !password) return res.status(400).json({status: "failure", message: "both fields are required"});
@@ -66,7 +67,8 @@ export const login = async (req, res) => {
     if(!isPasswordValid) return res.status(403).json({status: "failure", message: "invalid credential"});
     
     
-    const {newAccessToken, newRefreshToken} = generateToken(user);
+    const {newAccessToken, newRefreshToken} = await generateToken(user);
+    
 
     user.refreshToken = newRefreshToken;
       await user.save();
@@ -103,7 +105,9 @@ export const logout = (req, res) => {
 }
 
 export const getMe = (req, res) => {
-  res.status(200).json(req.user)
+  res.status(200).json({
+    user: req.user,
+  });
 }
 
 export const refresh = async (req, res) => {
@@ -149,78 +153,25 @@ export const refresh = async (req, res) => {
 
 export const googleCallback = async (req, res) => {
   try {
-    /**
-     * STEP 1: Get Google user profile from Passport
-     * Passport automatically attaches it to req.user
-     */
-    const googleUser = req.user;
+    const user = req.user; // from passport
+    
 
-    /**
-     * Google profile structure (important to know):
-     * googleUser.id
-     * googleUser.emails[0].value
-     * googleUser.displayName
-     */
 
-    const email = googleUser.emails[0].value;
-    const googleId = googleUser.id;
+    const { newAccessToken, newRefreshToken } = await generateToken(user);
+    console.log(newAccessToken)
 
-    /**
-     * STEP 2: Check if user already exists in DB
-     */
-    let user = await User.findOne({ email });
+    res.cookie("accessToken", newAccessToken, cookieOptions);
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
 
-    /**
-     * STEP 3: If user does NOT exist → create one
-     */
-    if (!user) {
-      user = await User.create({
-        email,
-        googleId,
-        authProvider: "google"
-      });
+    // role-based redirect
+    if (user.role === "admin") {
+      return res.redirect("http://localhost:5173/dashboard");
     }
 
-    /**
-     * STEP 4: Create JWT payload
-     * (same structure as normal login)
-     */
-    const payload = {
-      userId: user._id,
-      email: user.email,
-      role: user.role,
-    };
-
-    /**
-     * STEP 5: Generate tokens
-     */
-    const accessToken = jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRY }
-    );
-
-    const refreshToken = jwt.sign(
-      payload,
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: process.env.JWT_REFRESH_EXPIRY }
-    );
-
-    /**
-     * STEP 6: Set HttpOnly cookies
-     */
-    res.cookie("accessToken", accessToken, cookieOptions);
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-
-    /**
-     * STEP 7: Redirect user to frontend dashboard
-     * IMPORTANT: OAuth uses redirects, NOT JSON
-     */
     return res.redirect("http://localhost:5173/dashboard");
 
   } catch (error) {
-    console.error("Google OAuth Error:", error);
-
-    return res.redirect("http://localhost:5173/login?error=oauth");
+    console.log("error in googlecallback");
+    return res.redirect("http://localhost:5173/login");
   }
 };
