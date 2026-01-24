@@ -28,8 +28,8 @@ export default function Login() {
 
     
 
-    // // SUCCESS
-    // login(data.user);
+    // SUCCESS
+    login(data.user);
 
     navigate("/dashboard", { replace: true });
 
