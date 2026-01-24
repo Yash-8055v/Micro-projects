@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -26,21 +26,21 @@ export default function UserDashboard() {
         </div>
 
         <p className="text-gray-600 mb-6">
-          Welcome! This is your personal dashboard.
+          Welcome back 👋
         </p>
 
         <div className="border rounded-lg p-4 bg-gray-50">
           <p className="text-sm text-gray-500">Account Info</p>
 
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-2">
             <div className="flex justify-between">
               <span>Email</span>
-              <span className="font-medium">user@email.com</span>
+              <span className="font-medium">{user?.email}</span>
             </div>
 
             <div className="flex justify-between">
               <span>Role</span>
-              <span className="font-medium">User</span>
+              <span className="font-medium capitalize">{user?.role}</span>
             </div>
           </div>
         </div>
