@@ -158,7 +158,7 @@ export const googleCallback = async (req, res) => {
 
 
     const { newAccessToken, newRefreshToken } = await generateToken(user);
-    console.log(newAccessToken)
+    
 
     res.cookie("accessToken", newAccessToken, cookieOptions);
     res.cookie("refreshToken", newRefreshToken, cookieOptions);
