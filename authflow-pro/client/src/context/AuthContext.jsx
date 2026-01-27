@@ -8,25 +8,42 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        
-        setUser(res.data.user);
+  let mounted = true;
 
-      } catch (error) {
+  const checkAuth = async () => {
+    try {
+      const res = await api.get("/auth/me");
+      if (mounted) {
+        setUser(res.data.user);
+      }
+    } catch (err) {
+      // IMPORTANT: 401 is expected on first load
+      if (mounted) {
         setUser(null);
-      }finally{
+      }
+    } finally {
+      if (mounted) {
         setLoading(false);
       }
     }
-    checkAuth();
-  
+  };
+
+  checkAuth();
+
+  return () => {
+    mounted = false;
+  };
 }, []);
 
 
-  const login = (userData) => {
-    setUser(userData)
+
+  const login = async (userData) => {
+    try {
+    const res = await api.get("/auth/me");
+    setUser(res.data.user);
+  } catch {
+    setUser(null);
+  }
     
   };
 

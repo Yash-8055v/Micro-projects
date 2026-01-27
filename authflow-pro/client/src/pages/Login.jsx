@@ -18,20 +18,17 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const response = await api.post("/auth/login", {
+    await api.post("/auth/login", {
       email,
       password,
     });
 
-    const data = response.data;
-    console.log(data)
-
     
-
+    
     // SUCCESS
-    login(data.user);
-
+    await login();
     navigate("/dashboard", { replace: true });
+
 
   } catch (err) {
     setError(err.response?.data?.message || "Login failed");

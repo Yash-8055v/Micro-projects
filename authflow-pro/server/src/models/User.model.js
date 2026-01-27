@@ -27,7 +27,27 @@ const userSchema = new mongoose.Schema({
   },
   refreshToken: {
   type: String
+},
+isPro: {
+  type: Boolean,
+  default: false,
+},
+
+stripeCustomerId: {
+  type: String,
+},
+
+stripeSubscriptionId: {
+  type: String,
+},
+
+subscriptionStatus: {
+  type: String,
+  enum: ["active", "inactive", "cancelled"],
+  default: "inactive",
 }
+
+
 
 }, {timestamps: true});
 

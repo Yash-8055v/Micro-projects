@@ -13,20 +13,16 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="bg-white w-full max-w-md rounded-xl shadow p-6 space-y-6">
-
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold">User Dashboard</h1>
-          <p className="text-gray-600 text-sm mt-1">
-            Welcome back 👋
-          </p>
+          <p className="text-gray-600 text-sm mt-1">Welcome back 👋</p>
         </div>
 
         {/* User Info */}
         <div className="border rounded-lg p-4 space-y-2">
           <p className="text-sm">
-            <span className="font-medium">Email:</span>{" "}
-            {user?.email}
+            <span className="font-medium">Email:</span> {user?.email}
           </p>
 
           <p className="text-sm">
@@ -36,17 +32,23 @@ export default function UserDashboard() {
 
           <p className="text-sm">
             <span className="font-medium">Plan:</span>{" "}
-            <span className="text-yellow-600">Free</span>
+            <span
+              className={user?.isPro ? "text-green-600" : "text-yellow-600"}
+            >
+              {user?.isPro ? "Pro" : "Free"}
+            </span>
           </p>
         </div>
 
         {/* Upgrade CTA */}
-        <button
-          onClick={() => navigate("/pricing")}
-          className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 transition"
-        >
-          Upgrade Plan
-        </button>
+        {!user?.isPro && (
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 transition"
+          >
+            Upgrade Plan
+          </button>
+        )}
 
         {/* Logout */}
         <button
@@ -55,7 +57,6 @@ export default function UserDashboard() {
         >
           Logout
         </button>
-
       </div>
     </div>
   );

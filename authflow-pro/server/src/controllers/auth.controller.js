@@ -83,7 +83,8 @@ export const login = async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        
       },
       
     })
@@ -104,11 +105,29 @@ export const logout = (req, res) => {
   res.status(200).json({status: "success", message: "logout successfully"});
 }
 
-export const getMe = (req, res) => {
-  res.status(200).json({
-    user: req.user,
-  });
-}
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId)
+      .select("-password -refreshToken");
+
+    if (!user) {
+      return res.status(401).json({
+        status: "failure",
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "failure",
+      message: "Failed to fetch user",
+    });
+  }
+};
 
 export const refresh = async (req, res) => {
   try {

@@ -6,6 +6,7 @@ export const verifyToken = (req, res, next) => {
     // const authHeader = req.headers.authorization;
     //* read cookies
     const token = req.cookies.accessToken;
+    // console.log(token)
     
     
   

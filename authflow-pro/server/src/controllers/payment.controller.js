@@ -3,40 +3,30 @@ import stripe from "../config/stripe.js";
 export const createCheckoutSession = async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
-  mode: "payment",
+      mode: "subscription",
 
-  payment_method_types: ["card"],
+      payment_method_types: ["card"],
 
-  line_items: [
-    {
-      price: process.env.STRIPE_PRICE_ID,
-      quantity: 1,
-    },
-  ],
+      line_items: [
+        {
+          price: process.env.STRIPE_PRICE_ID,
+          quantity: 1,
+        },
+      ],
 
-  success_url: `${process.env.CLIENT_URL}/payment-success`,
-  cancel_url: `${process.env.CLIENT_URL}/pricing`,
+      customer_email: req.user.email,
 
-  customer_email: req.user.email,
+      metadata: {
+        userId: req.user.userId,
+      },
 
-  // 🔥 THIS IS THE KEY
-  metadata: {
-    userId: req.user.userId,
-  },
-});
-
-
-    return res.status(200).json({
-      status: "success",
-      url: session.url,
+      success_url: `${process.env.CLIENT_URL}/payment-success`,
+      cancel_url: `${process.env.CLIENT_URL}/pricing`,
     });
 
+    res.status(200).json({ url: session.url });
   } catch (error) {
-    console.error("Stripe checkout error:", error);
-
-    return res.status(500).json({
-      status: "failure",
-      message: "Unable to create checkout session",
-    });
+    console.error(error);
+    res.status(500).json({ message: "Stripe error" });
   }
 };

@@ -7,6 +7,8 @@ import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Unauthorized from "./pages/Unauthorized";
 import DashboardRedirect from "./pages/DashboardRedirect";
+import Pricing from "./pages/Pricing";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 function App() {
   return (
@@ -46,6 +48,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+      path="/pricing"
+      element={
+        <ProtectedRoute>
+          <Pricing/>
+        </ProtectedRoute>
+      }/>
+
+      <Route path="/payment-success" element={<PaymentSuccess/>} />
 
       <Route path="/unauthorized" element={<Unauthorized/>}/>
     </Routes>
