@@ -8,7 +8,7 @@
   },
   "author": "yash karande",
   "license": "ISC",
-  "description": "",
+  "description": "“A secure MERN-based SaaS system with authentication, role management, and payment integration",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
